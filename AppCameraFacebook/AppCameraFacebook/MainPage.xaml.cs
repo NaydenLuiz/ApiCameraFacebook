@@ -28,9 +28,9 @@ namespace AppCameraFacebook
                 {
                     SaveToAlbum = true
                 });
-            if (file == null)
+            if (file != null)
             {
-                return;
+                
                 PathLabel.Text = file.AlbumPath;
                 MainImage.Source = ImageSource.FromStream(() =>
                 {
@@ -49,9 +49,9 @@ namespace AppCameraFacebook
                 return;
             }
             var file = await CrossMedia.Current.PickPhotoAsync();
-            if (file == null)
+            if (file != null)
             {
-                return;
+               
                 PathLabel.Text = "Photo path" + file.Path;
                 MainImage.Source = ImageSource.FromStream(() =>
                 {
@@ -77,7 +77,7 @@ namespace AppCameraFacebook
             });
             if (file == null)
             {
-                return;
+                
                 PathLabel.Text = "Photo Path" + file.Path;
                 MainImage.Source = ImageSource.FromStream(() =>
                 {
@@ -99,7 +99,7 @@ namespace AppCameraFacebook
             
             if (file == null)
             {
-                return;
+               
                 PathLabel.Text = "Photo Path" + file.Path;
                 MainImage.Source = ImageSource.FromStream(() =>
                 {
