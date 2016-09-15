@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:AppCameraFacebook"
+               x:Class="AppCameraFacebook.MainPage">
+  <StackLayout>
+    <ScrollView>
+      <StackLayout Orientation="Vertical" Padding="10">
+        
+         <Label Text="Welcome to Xamarin Forms!"  HorizontalOptions="Center" Font="22"/>
+        <Button Text="Take a Photo" BackgroundColor="Teal" TextColor="White" FontSize="30" Clicked="TakePhotoButton_Clicked"></Button>
+        <Button Text="Pick a Photo" BackgroundColor="Maroon" TextColor="White" FontSize="30" Clicked="PickPhotoButton_Clicked"></Button>
+        <Button Text="Take a Video" BackgroundColor="Olive" TextColor="White" FontSize="30" Clicked="TakeVideoButton_Clicked"></Button>
+        <Button Text="Pick a Video" BackgroundColor="Navy" TextColor="White" FontSize="30" Clicked="PickVideoButton_Clicked"></Button>
+        <Image x:Name="MainImage"></Image>
+        <Label  x:Name="PathLabel"  FontSize="14" TextColor="Black"/>
+      
+      </StackLayout>
+    </ScrollView>
+  </StackLayout>
+</ContentPage>
