@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
+using System.Net.Http;
 
 namespace AppCameraFacebook
 {
+
     public partial class MainPage : ContentPage
     {
+        private MediaFile _mediaFile;
         public MainPage()
         {
             InitializeComponent();
@@ -20,22 +23,22 @@ namespace AppCameraFacebook
             await CrossMedia.Current.Initialize();
             if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
             {
-                await DisplayAlert("No Camera", ":( No Camera available.", "OK");
+                await DisplayAlert("Erro Camera", ":( Não é possivel utilizar a câmera agora." + Environment.NewLine + "Tente novamente mais tarde.", "OK");
                 return;
             }
-            var file = await CrossMedia.Current.TakePhotoAsync(
+            _mediaFile = await CrossMedia.Current.TakePhotoAsync(
                 new StoreCameraMediaOptions
                 {
                     SaveToAlbum = true
                 });
-            if (file != null)
+            if (_mediaFile != null)
             {
                 
-                PathLabel.Text = file.AlbumPath;
+                PathLabel.Text = _mediaFile.AlbumPath;
                 MainImage.Source = ImageSource.FromStream(() =>
                 {
-                    var stream = file.GetStream();
-                    file.Dispose();
+                    var stream = _mediaFile.GetStream();
+                    _mediaFile.Dispose();
                     return stream;
                 });
             }
@@ -48,66 +51,34 @@ namespace AppCameraFacebook
                 await DisplayAlert("Ooops", "Pick photo is not supported !", "OK");
                 return;
             }
-            var file = await CrossMedia.Current.PickPhotoAsync();
-            if (file != null)
+             _mediaFile = await CrossMedia.Current.PickPhotoAsync();
+            if (_mediaFile != null)
             {
                
-                PathLabel.Text = "Photo path" + file.Path;
+                PathLabel.Text = "Photo path" + _mediaFile.Path;
                 MainImage.Source = ImageSource.FromStream(() =>
                 {
-                    var stream = file.GetStream();
-                    file.Dispose();
+                    var stream = _mediaFile.GetStream();
+                    _mediaFile.Dispose();
                     return stream;
                 });
             }
 
         }
-        public async void TakeVideoButton_Clicked(Object sender, EventArgs e)
+
+        public async void UploadPhoto_Clicked(Object sender, EventArgs e)
         {
-            await CrossMedia.Current.Initialize();
-            if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakeVideoSupported)
-            {
-                await DisplayAlert("No Camera", ":( No Camera available", "OK");
-                return;
-            }
-            var file = await CrossMedia.Current.TakeVideoAsync(new StoreVideoOptions
-            {
-                SaveToAlbum =true,
-                Quality=VideoQuality.Medium,
-            });
-            if (file == null)
-            {
-                
-                PathLabel.Text = "Photo Path" + file.Path;
-                MainImage.Source = ImageSource.FromStream(() =>
-                {
-                    var stream = file.GetStream();
-                    file.Dispose();
-                    return stream;
-                });
-            }
+            var content = new MultipartFormDataContent();
+            content.Add(new StreamContent(_mediaFile.GetStream()),
+            "\"file\"",
+            $"\"{_mediaFile.Path}\"");
+            var httpClient = new HttpClient();
+            var url = "your adress here endereco aqui";
+            var httpResponseMessage = await httpClient.PostAsync(url, content);
+            string retorno = await httpResponseMessage.Content.ReadAsStringAsync();
+
         }
-        public async void PickVideoButton_Clicked(Object sender, EventArgs e)
-        {
-            await CrossMedia.Current.Initialize();
-            if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakeVideoSupported)
-            {
-                await DisplayAlert("No Camera", ":( No Camera available", "OK");
-                return;
-            }
-            var file = await CrossMedia.Current.PickVideoAsync();
-            
-            if (file == null)
-            {
-               
-                PathLabel.Text = "Photo Path" + file.Path;
-                MainImage.Source = ImageSource.FromStream(() =>
-                {
-                    var stream = file.GetStream();
-                    file.Dispose();
-                    return stream;
-                });
-            }
-        }
+
+
     }
 }
